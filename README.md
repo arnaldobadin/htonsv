@@ -7,3 +7,4 @@
 - [ ] Test framework;
 - [ ] Add portable version;
 - [ ] Modify extension connection;
+- [ ] Add lock to _listen bool attrb;
