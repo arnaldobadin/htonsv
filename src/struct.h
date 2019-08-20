@@ -3,7 +3,7 @@
 
 #include <json.hpp>
 
-#include "Server/Status.h"
+#include "status.h"
 
 using json = nlohmann::json;
 
@@ -40,7 +40,7 @@ class Struct {
 			}
 		};
 
-		static Methods doParseMethod(const std::string& value) {
+		static Methods parseMethod(const std::string& value) {
 			Methods target = Methods::NONE;
 
 			if (value == "GET") target = Methods::GET;

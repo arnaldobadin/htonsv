@@ -1,4 +1,4 @@
-#include "Response.h"
+#include "response.h"
 
 Response::Response(int socket_in) :
 	_socket(socket_in),
@@ -11,16 +11,16 @@ Response::~Response() {
 	
 }
 
-bool Response::doSendSuccess() {
+bool Response::sendSuccess() {
 	setCode(HttpStatus::Code::OK);
 	setHeader("Connection", "Closed");
-	return _doSendPayload();
+	return _sendPayload();
 }
 
-bool Response::doSendError(HttpStatus::Code code, const std::string& message) {
+bool Response::sendError(HttpStatus::Code code, const std::string& message) {
 	setCode(code);
-	doClearHeaders();
-	doClearBody();
+	clearHeaders();
+	clearBody();
 
 	setHeader("Connection", "Closed");
 
@@ -30,17 +30,17 @@ bool Response::doSendError(HttpStatus::Code code, const std::string& message) {
 	body["error"]["message"] = message;
 
 	setBody(body);
-	return _doSendPayload();
+	return _sendPayload();
 }
 
-bool Response::_doSendPayload() {
+bool Response::_sendPayload() {
 	if (_sent) return false;
 
 	setHeader("Server", "Dark");
 	setHeader("Content-Type", "application/json");
 
 	std::string payload;
-	if (!_doCreatePayload(payload)) {
+	if (!_createPayload(payload)) {
 		return false;
 	}
 
@@ -52,7 +52,7 @@ bool Response::_doSendPayload() {
 	return true;
 }
 
-bool Response::_doCreatePayload(std::string& payload) {
+bool Response::_createPayload(std::string& payload) {
 	std::string current_payload;
     std::string data = _attributes.body.dump(4);
 

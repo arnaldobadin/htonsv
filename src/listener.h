@@ -7,17 +7,16 @@
 #include <sys/socket.h>
 #include <stdlib.h>
 #include <netinet/in.h>
-
-#include "Tools/Logger.h"
+#include <stdexcept>
 
 class Listener {
 	public:
 		Listener(int16_t port);
 		~Listener();
 
-		int doAccept();
-		int doListen(unsigned int max_connections);
-		bool doStop();
+		bool start(unsigned int max_connections);
+		bool stop();
+		int acquire();
 
 	private:
 		int16_t _port;
@@ -26,9 +25,10 @@ class Listener {
 		struct sockaddr_in _address;
 
 		bool _status;
+		bool _listen;
 
-		bool _doCreateSocket(int& socket_in);
-		bool _doBindSocket(int socket_in);
+		bool _createSocket(int& socket_in);
+		bool _bindSocket(int socket_in);
 };
 
 #endif

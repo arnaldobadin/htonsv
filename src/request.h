@@ -10,7 +10,7 @@
 #include <regex>
 #include <json.hpp>
 
-#include "Server/Struct.h"
+#include "struct.h"
 
 using json = nlohmann::json;
 
@@ -33,10 +33,9 @@ class Request {
 		Struct::Attributes _attributes;
 		bool _status;
 
-		std::string _doReceiveData(int sock_in);
-		bool _doParseData(const std::string& data, Struct::Attributes& attributes);
-		std::vector<std::string> _doSplitText(const std::string& text, const std::string& delimiter);
-		std::vector<std::string> _doSplitText(const std::string& text, const std::string& delimiter, int lock);
+		std::string _receiveData(int sock_in);
+		bool _parseData(const std::string& data, Struct::Attributes& attributes);
+		std::vector<std::string> _splitText(const std::string& text, const std::string& delimiter);
 };
 
 #endif

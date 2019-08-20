@@ -1,4 +1,4 @@
-#include "Server/Server.h"
+#include "server.h"
 
 Server::Server(std::uint16_t port, unsigned int max_connections, unsigned int thread_count) : 
     _port(port),
@@ -8,16 +8,16 @@ Server::Server(std::uint16_t port, unsigned int max_connections, unsigned int th
     _listen(false)
 {
 	if (max_connections == 0) {
-		Logger::doSendMessage(Logger::TYPES::ERROR, "Max connections can't be none on Server::Constructor.");
+		throw std::invalid_argument("Max connections can't be none.");
 	}
 
 	_listener = std::unique_ptr<Listener>(new Listener(_port));
 }
 
 Server::~Server() {
-	doStop();
+	stop();
 
-	_listener->doStop();
+	_listener->stop();
 
 	try {
 		if (_thread_consume.joinable()) {
@@ -57,26 +57,27 @@ bool Server::getRoute(const std::string& path, Struct::Methods method, Server::R
     return false;
 }
 
-bool Server::doListen() {
+bool Server::start() {
 	if (_listen) return false;
 
-	if (_listener->doListen(_max_connections) < 0) {
+	if (!_listener->start(_max_connections)) {
 		return false;
 	}
 
-	_listen = true;
+	{
+		std::lock_guard<std::mutex> lock(_mutex);
+		_listen = true;
+	}
 
-	Logger::doSendMessage(Logger::TYPES::INFO, "Server running with success at port " + std::to_string(_port) + ".");
-
-	_thread_consume = std::thread(&Server::_doConsumeSocket, this);
+	_thread_consume = std::thread(&Server::_consumeSocket, this);
 	for (size_t i = 0; i < _thread_count; i++) {
-		_thread_process.push_back(std::thread(&Server::_doProcessSocket, this));
+		_thread_process.push_back(std::thread(&Server::_processSocket, this));
 	}
 
 	return true;
 }
 
-bool Server::doStop() {
+bool Server::stop() {
 	if (!_listen) return false;
 	{
 		std::lock_guard<std::mutex> lock(_mutex);
@@ -86,11 +87,11 @@ bool Server::doStop() {
 	return true;
 }
 
-void Server::_doConsumeSocket() {
+void Server::_consumeSocket() {
 	int socket_in = -1;
 
 	while (_listen) {
-		socket_in = _listener->doAccept();
+		socket_in = _listener->acquire();
 
 		{
 			std::lock_guard<std::mutex> lock(_mutex);
@@ -102,7 +103,7 @@ void Server::_doConsumeSocket() {
 	}
 }
 
-void Server::_doProcessSocket() {
+void Server::_processSocket() {
 	while (_listen) {
 		int queue_size = 0;
 
@@ -138,15 +139,15 @@ void Server::_doProcessSocket() {
 		Request request(socket_in);
 		Response response(socket_in);
 		
-		_doProcessRequest(&request, &response);
+		_processRequest(&request, &response);
 
 		close(socket_in);
 	}
 }
 
-bool Server::_doProcessRequest(Request* request, Response* response) {
+bool Server::_processRequest(Request* request, Response* response) {
 	if (!request->isValid()) {
-		response->doSendError(HttpStatus::Code::BadRequest, "Invalid request.");
+		response->sendError(HttpStatus::Code::BadRequest, "Invalid request.");
 		return false;
 	}
 
@@ -155,14 +156,14 @@ bool Server::_doProcessRequest(Request* request, Response* response) {
 
 	Server::Route route;
 	if (!getRoute(path, method, route)) {
-		response->doSendError(HttpStatus::Code::Forbidden, "Path invalid/not found.");
+		response->sendError(HttpStatus::Code::Forbidden, "Path invalid/not found.");
 		return false;
 	}
 
 	route.callback(request, response);
 
-	if (!response->isSent()) {
-		response->doSendError(HttpStatus::Code::ServiceUnavailable, "Resource was not found or can't respond now.");
+	if (!response->wasSent()) {
+		response->sendError(HttpStatus::Code::ServiceUnavailable, "Resource was not found or can't respond now.");
 	}
 
 	return true;

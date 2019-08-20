@@ -14,12 +14,12 @@
 #include <mutex>
 #include <condition_variable>
 #include <memory>
+#include <stdexcept>
 
-#include "Server/Listener.h"
-#include "Server/Request.h"
-#include "Server/Response.h"
-#include "Server/Struct.h"
-#include "Tools/Logger.h"
+#include "listener.h"
+#include "request.h"
+#include "response.h"
+#include "struct.h"
 
 class Server {
 	public:
@@ -42,8 +42,8 @@ class Server {
 		bool setRoute(const std::string& path, Struct::Methods method, std::function<void(Request*, Response*)> callback);
 		bool getRoute(const std::string& path, Struct::Methods method, Route& route);
 
-		bool doListen();
-		bool doStop();
+		bool start();
+		bool stop();
 
 	private:
 		std::uint16_t _port;
@@ -64,9 +64,9 @@ class Server {
 
 		std::unique_ptr<Listener> _listener;
 
-		void _doConsumeSocket();
-		void _doProcessSocket();
-		bool _doProcessRequest(Request* request, Response* response);
+		void _consumeSocket();
+		void _processSocket();
+		bool _processRequest(Request* request, Response* response);
 };
 
 #endif

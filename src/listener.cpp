@@ -1,47 +1,58 @@
-#include "Listener.h"
+#include "listener.h"
 
 Listener::Listener(int16_t port) : 
 	_port(port),
 	_socket(-1) {
 
-	if (!_doCreateSocket(_socket)) {
-		Logger::doSendMessage(Logger::TYPES::ERROR, "Failed to create socket on Listener::Constructor.");
+	if (!_createSocket(_socket)) {
+		throw std::runtime_error("Failed to create socket.");
 	}
 
 	_address.sin_family = AF_INET;
     _address.sin_addr.s_addr = INADDR_ANY;
     _address.sin_port = htons(_port);
 
-	if (!_doBindSocket(_socket)) {
-		Logger::doSendMessage(Logger::TYPES::ERROR, "Failed to bind socket on Listener::Constructor.");
+	if (!_bindSocket(_socket)) {
+		throw std::runtime_error("Failed to bind socket.");
 	};
 
 	_status = true;
+	_listen = false;
 }
 
 Listener::~Listener() {
-	doStop();
+	stop();
 	close(_socket);
 	_socket = -1;
 }
 
-int Listener::doAccept() {
-	int address_size = sizeof(_address);
-	return accept(_socket, (struct sockaddr*) &_address, (socklen_t*) &address_size);
+bool Listener::start(unsigned int max_connections) {
+	if (_listen) return false;
+
+	if (listen(_socket, max_connections) < 0) {
+		return false;
+	}
+
+	_listen = true;
+	return true;
 }
 
-int Listener::doListen(unsigned int max_connections) {
-	return listen(_socket, max_connections);
-}
-
-bool Listener::doStop() {
+bool Listener::stop() {
 	if (!_status) return false;
+	
 	shutdown(_socket, SHUT_RD);
+
+	_listen = false;
 	_status = false;
 	return true;
 }
 
-bool Listener::_doCreateSocket(int& socket_in) {
+int Listener::acquire() {
+	int address_size = sizeof(_address);
+	return accept(_socket, (struct sockaddr*) &_address, (socklen_t*) &address_size);
+}
+
+bool Listener::_createSocket(int& socket_in) {
 	int socket_tmp = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_tmp == 0) return false;
 
@@ -55,7 +66,7 @@ bool Listener::_doCreateSocket(int& socket_in) {
 	return true;
 }
 
-bool Listener::_doBindSocket(int socket_in) {
+bool Listener::_bindSocket(int socket_in) {
 	if (!socket_in) return false;
 
 	if (bind(socket_in, (struct sockaddr*) &_address, sizeof(_address)) < 0) {
