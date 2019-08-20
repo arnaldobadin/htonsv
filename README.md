@@ -7,6 +7,7 @@
 - [ ] Think a better way to store Requests and Response's attr;
 - [ ] Fix "status.h";
 - [ ] Add portable version;
+- [ ] Make dynamic listener threads that scalate as requests coming;
 - [ ] Test framework;
 - [ ] Update (create one '-') documentation;
 - [x] Add lock to _listen bool attrb;
