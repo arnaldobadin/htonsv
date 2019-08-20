@@ -8,3 +8,4 @@
 - [ ] Add portable version;
 - [ ] Modify extension connection;
 - [ ] Add lock to _listen bool attrb;
+- [ ] Make dynamic listener threads that scalate as requests coming;
