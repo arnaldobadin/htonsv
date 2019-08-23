@@ -33,7 +33,7 @@ std::string Request::_receiveData(int sock_in) {
 
 bool Request::_parseData(const std::string& data, Struct::Attributes& attributes) {
 	std::string delimiter = "\r\n";
-	std::vector<std::string> rows = _splitText(data, delimiter);
+	std::vector<std::string> rows = Text::split(data, delimiter);
 	if (!rows.size()) return false;
 
 	std::string header = rows[0];
@@ -41,7 +41,7 @@ bool Request::_parseData(const std::string& data, Struct::Attributes& attributes
 
 	if (!header.length()) return false;
 
-	std::vector<std::string> parsed_header = _splitText(header, std::string(" "));
+	std::vector<std::string> parsed_header = Text::split(header, std::string(" "));
 	if (parsed_header.size() < 2) return false;
 
 	Struct::Methods method = Struct::parseMethod(parsed_header[0]);
@@ -54,7 +54,7 @@ bool Request::_parseData(const std::string& data, Struct::Attributes& attributes
 		std::string row = rows[i];
 		delimiter = ":";
 
-		std::vector<std::string> splited = _splitText(row, delimiter);
+		std::vector<std::string> splited = Text::split(row, delimiter);
 		if (splited.size() != 2) continue;
 
 		headers[splited[0]] = splited[1];
@@ -77,37 +77,5 @@ bool Request::_parseData(const std::string& data, Struct::Attributes& attributes
 
     attributes.body = parsed;
     return true;
-}
-
-std::vector<std::string> Request::_splitText(const std::string& text, const std::string& delimiter) {
-    std::vector<std::string> result;
-    unsigned int delimiter_length = delimiter.length();
-
-    if (!text.length()) return result;
-    
-    std::string block;
-    std::string region;
-    int index = 0;
-
-    for (size_t i = 0; i < text.length(); i++) {
-        block = text.substr(i, delimiter_length);
-        if (block.length() != delimiter_length) continue;
-        
-        if (block == delimiter) {
-            region = text.substr(index, i - index);
-            result.push_back(region);
-            index = i + delimiter_length;
-        }
-    }
-
-    if (!result.size()) {
-    	result.push_back(text);
-    	return result;
-    }
-
-    std::string tail = text.substr(index, delimiter_length - index);
-    if (tail.length()) result.push_back(tail);
-
-    return result;
 }
 

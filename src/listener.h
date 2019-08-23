@@ -8,27 +8,29 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <stdexcept>
+#include <atomic>
 
 class Listener {
 	public:
-		Listener(int16_t port);
+		Listener(int16_t port, unsigned int max_connection_count = 512);
 		~Listener();
 
-		bool start(unsigned int max_connections);
+		bool start();
 		bool stop();
+
 		int acquire();
 
 	private:
 		int16_t _port;
+		unsigned int _max_connection_count;
+
+		std::atomic<bool> _status;
 
 		int _socket;
 		struct sockaddr_in _address;
 
-		bool _status;
-		bool _listen;
-
-		bool _createSocket(int& socket_in);
-		bool _bindSocket(int socket_in);
+		bool _create();
+		bool _bind();
 };
 
 #endif

@@ -10,7 +10,8 @@
 #include <regex>
 #include <json.hpp>
 
-#include "struct.h"
+#include "struct.hpp"
+#include "text.hpp"
 
 using json = nlohmann::json;
 
@@ -35,7 +36,6 @@ class Request {
 
 		std::string _receiveData(int sock_in);
 		bool _parseData(const std::string& data, Struct::Attributes& attributes);
-		std::vector<std::string> _splitText(const std::string& text, const std::string& delimiter);
 };
 
 #endif

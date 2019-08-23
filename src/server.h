@@ -1,29 +1,22 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include <cstdint>
-#include <unistd.h>
-#include <stdio.h>
-#include <sys/socket.h>
-#include <stdlib.h>
-#include <netinet/in.h>
 #include <string.h>
 #include <iostream>
 #include <unordered_map>
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-#include <memory>
 #include <stdexcept>
+#include <vector>
+#include <atomic>
+#include <memory>
 
-#include "listener.h"
+#include "consumer.h"
 #include "request.h"
 #include "response.h"
-#include "struct.h"
+#include "struct.hpp"
 
 class Server {
 	public:
-		Server(std::uint16_t port, unsigned int max_connections = 64, unsigned int thread_count = 5);
+		Server(std::uint16_t port);
 		~Server();
 
 		struct Route {
@@ -47,26 +40,13 @@ class Server {
 
 	private:
 		std::uint16_t _port;
-		unsigned int _max_connections;
-		unsigned int _thread_count;
 
-		std::mutex _mutex;
-		std::condition_variable _condition;
+		std::atomic<bool> _status;
 
-		bool _signal;
-		bool _listen;
-
-		std::vector<unsigned int> _queue;
 		std::vector<Route> _routes;
+		std::unique_ptr<Consumer> _consumer;
 
-		std::thread _thread_consume;
-		std::vector<std::thread> _thread_process;
-
-		std::unique_ptr<Listener> _listener;
-
-		void _consumeSocket();
-		void _processSocket();
-		bool _processRequest(Request* request, Response* response);
+		void _process(int socket_in);
 };
 
 #endif

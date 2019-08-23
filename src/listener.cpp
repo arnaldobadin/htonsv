@@ -1,39 +1,31 @@
 #include "listener.h"
 
-Listener::Listener(int16_t port) : 
+Listener::Listener(int16_t port, unsigned int max_connection_count) : 
 	_port(port),
-	_socket(-1) {
-
-	if (!_createSocket(_socket)) {
-		throw std::runtime_error("Failed to create socket.");
+	_max_connection_count(max_connection_count),
+	_socket(-1),
+	_status(false)
+{
+	if (_max_connection_count == 0) {
+		throw std::invalid_argument("Max connections can't be none.");
 	}
-
-	_address.sin_family = AF_INET;
-    _address.sin_addr.s_addr = INADDR_ANY;
-    _address.sin_port = htons(_port);
-
-	if (!_bindSocket(_socket)) {
-		throw std::runtime_error("Failed to bind socket.");
-	};
-
-	_status = true;
-	_listen = false;
 }
 
 Listener::~Listener() {
 	stop();
-	close(_socket);
-	_socket = -1;
 }
 
-bool Listener::start(unsigned int max_connections) {
-	if (_listen) return false;
+bool Listener::start() {
+	if (_status) return false;
 
-	if (listen(_socket, max_connections) < 0) {
+	if (!_create()) return false;
+	if (!_bind()) return false;
+
+	if (listen(_socket, _max_connection_count) < 0) {
 		return false;
 	}
 
-	_listen = true;
+	_status = true;
 	return true;
 }
 
@@ -41,8 +33,9 @@ bool Listener::stop() {
 	if (!_status) return false;
 	
 	shutdown(_socket, SHUT_RD);
+	close(_socket);
+	_socket = -1;
 
-	_listen = false;
 	_status = false;
 	return true;
 }
@@ -52,7 +45,11 @@ int Listener::acquire() {
 	return accept(_socket, (struct sockaddr*) &_address, (socklen_t*) &address_size);
 }
 
-bool Listener::_createSocket(int& socket_in) {
+bool Listener::_create() {
+	_address.sin_family = AF_INET;
+	_address.sin_addr.s_addr = INADDR_ANY;
+	_address.sin_port = htons(_port);
+
 	int socket_tmp = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_tmp == 0) return false;
 
@@ -62,16 +59,13 @@ bool Listener::_createSocket(int& socket_in) {
 		return false;
 	}
 
-	socket_in = socket_tmp;
+	_socket = socket_tmp;
 	return true;
 }
 
-bool Listener::_bindSocket(int socket_in) {
-	if (!socket_in) return false;
-
-	if (bind(socket_in, (struct sockaddr*) &_address, sizeof(_address)) < 0) {
+bool Listener::_bind() {
+	if (bind(_socket, (struct sockaddr*) &_address, sizeof(_address)) < 0) {
 		return false;
 	}
-
 	return true;
 }

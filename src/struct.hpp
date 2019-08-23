@@ -3,7 +3,7 @@
 
 #include <json.hpp>
 
-#include "status.h"
+#include "status.hpp"
 
 using json = nlohmann::json;
 
@@ -18,12 +18,12 @@ class Struct {
 
 			std::string path;
 			Methods method;
-			HttpStatus::Code code;
+			Status::Code code;
 			std::unordered_map<std::string, std::string> headers;
 			json body;
 
 			Attributes() {
-				code = HttpStatus::Code::InternalServerError;
+				code = Status::InternalServerError;
 				body = json::value_t::object;
 			}
 

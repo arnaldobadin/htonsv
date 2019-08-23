@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "struct.h"
+#include "struct.hpp"
 
 class Response {
 	public:
@@ -14,14 +14,14 @@ class Response {
 		~Response();
 
 		bool wasSent() const {return _sent;}
-		void setCode(HttpStatus::Code code) {_attributes.code = code;}
+		void setCode(Status::Code code) {_attributes.code = code;}
 		void setHeader(std::string key, std::string value) {_attributes.headers[key] = value;}
 		void setBody(json body) {_attributes.body = body;}
 		void clearHeaders() {_attributes.headers.clear();}
 		void clearBody() {_attributes.body = json::value_t::object;}
 
 		bool sendSuccess();
-		bool sendError(HttpStatus::Code code, const std::string& message);
+		bool sendError(Status::Code code, const std::string& message);
 
 	private:
 		int _socket;

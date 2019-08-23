@@ -12,12 +12,12 @@ Response::~Response() {
 }
 
 bool Response::sendSuccess() {
-	setCode(HttpStatus::Code::OK);
+	setCode(Status::OK);
 	setHeader("Connection", "Closed");
 	return _sendPayload();
 }
 
-bool Response::sendError(HttpStatus::Code code, const std::string& message) {
+bool Response::sendError(Status::Code code, const std::string& message) {
 	setCode(code);
 	clearHeaders();
 	clearBody();
@@ -26,7 +26,7 @@ bool Response::sendError(HttpStatus::Code code, const std::string& message) {
 
 	json body;
 	body["error"] = {};
-	body["error"]["code"] = code;
+	body["error"]["code"] = code.id;
 	body["error"]["message"] = message;
 
 	setBody(body);
@@ -62,7 +62,7 @@ bool Response::_createPayload(std::string& payload) {
 		_attributes.headers["Content-Length"] = std::to_string(data_length);
 	}
 
-	current_payload += _attributes.version + " " + std::to_string((int) _attributes.code) + " " + HttpStatus::getReasonPhrase(_attributes.code) + "\r\n";
+	current_payload += _attributes.version + " " + std::to_string(_attributes.code.id) + " " + _attributes.code.name + "\r\n";
 
     std::unordered_map<std::string, std::string>::iterator iterator;
     for (iterator = _attributes.headers.begin(); iterator != _attributes.headers.end(); iterator++) {
