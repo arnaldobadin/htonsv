@@ -14,16 +14,16 @@ Just a simple HTTP JSON Server;
 	int port = 5000;
 
 	/* declare Server instance */
-    Server server(port);
+	Server server(port);
 
-    /* set a route (entry) */
-    server.setRoute("/status", Struct::Methods::GET, sendStatus);
+	/* set a route (entry) */
+	server.setRoute("/status", Struct::Methods::GET, sendStatus);
 
-    /* start server */
-    server.start();
+	/* start server */
+	server.start();
 
-    /* block current thread */
-    while (true) {}
+	/* block current thread */
+	while (true) {}
 ```
 
 > You can add routes, taking the path, method and function to be execute:
@@ -32,28 +32,28 @@ Just a simple HTTP JSON Server;
 
 	void sendStatus(Request* request, Response* response) {
 		/* create a JSON object that will be sent in response */
-	    json payload;
-	    payload["message"] = "Server is running without a problem.";
+		json payload;
+		payload["message"] = "Server is running without a problem.";
 
-	    /* set data to send on response */
-	    response->setBody(payload);
-	    /* unique call */
-	    response->sendSuccess();
+		/* set data to send on response */
+		response->setBody(payload);
+		/* unique call */
+		response->sendSuccess();
 	}
 
 	void doSomething(Request* request, Response* response) {
 		/* get request input (user's input) -- coming as JSON object -- */
-	    json data = request->getBody();
+		json data = request->getBody();
 
-	    /* set data to send on response -- just mirroing -- */
-	    response->setBody(data);
-	    /* unique call */
-	    response->sendSuccess();
+		/* set data to send on response -- just mirroing -- */
+		response->setBody(data);
+		/* unique call */
+		response->sendSuccess();
 	}
 
-    /* set routes (entries) */
-    server.setRoute("/status", Struct::Methods::GET, sendStatus);
-    server.setRoute("/status", Struct::Methods::POST, doSomething);
+	/* set routes (entries) */
+	server.setRoute("/status", Struct::Methods::GET, sendStatus);
+	server.setRoute("/status", Struct::Methods::POST, doSomething);
 ```
 
 > 
@@ -65,33 +65,33 @@ Just a simple HTTP JSON Server;
 	#include "external.hpp"
 
 	void sendStatus(Request* request, Response* response) {
-	    json payload;
-	    payload["message"] = "Everything is working smoothly as possible.";
+		json payload;
+		payload["message"] = "Everything is working smoothly as possible.";
 
-	    response->setBody(payload);
-	    response->sendSuccess();
+		response->setBody(payload);
+		response->sendSuccess();
 	}
 
 	void mirrorData(Request* request, Response* response) {
-	    json data = request->getBody();
+		json data = request->getBody();
 
-	    response->setBody(data);
-	    response->sendSuccess();
+		response->setBody(data);
+		response->sendSuccess();
 	}
 
 	int main(int argc, char* argv[]) {
-	    int16_t port = 5000;
+		int16_t port = 5000;
 
-	    std::unique_ptr<Server> server(new Server(port));
+		std::unique_ptr<Server> server(new Server(port));
 
-	    server->setRoute("/status", Struct::Methods::GET, sendStatus);
-	    server->setRoute("/mirror", Struct::Methods::POST, mirrorData);
+		server->setRoute("/status", Struct::Methods::GET, sendStatus);
+		server->setRoute("/mirror", Struct::Methods::POST, mirrorData);
 
-	    server->start();
+		server->start();
 
-	    while (true) {}
+		while (true) {}
 
-	    return 1;
+		return 1;
 	}
 ```
 

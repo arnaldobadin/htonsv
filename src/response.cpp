@@ -12,12 +12,12 @@ Response::~Response() {
 }
 
 bool Response::sendSuccess() {
-	setCode(Status::OK);
+	setCode(Protocol::Status("OK"));
 	setHeader("Connection", "Closed");
 	return _sendPayload();
 }
 
-bool Response::sendError(Status::Code code, const std::string& message) {
+bool Response::sendError(Protocol::Table::Item code, const std::string& message) {
 	setCode(code);
 	clearHeaders();
 	clearBody();

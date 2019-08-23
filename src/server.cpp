@@ -13,9 +13,9 @@ Server::~Server() {
 	stop();
 }
 
-bool Server::setRoute(const std::string& path, Struct::Methods method, std::function<void(Request*, Response*)> callback) {
+bool Server::setRoute(const std::string& path, Protocol::Table::Item method, std::function<void(Request*, Response*)> callback) {
 	for (const Route& value : _routes) {
-		if (value.path == path && value.method == method) {
+		if (value.path == path && value.method.id == method.id) {
 			return false;
 		}
 	}
@@ -27,9 +27,9 @@ bool Server::setRoute(const std::string& path, Struct::Methods method, std::func
 	return true;
 }
 
-bool Server::getRoute(const std::string& path, Struct::Methods method, Server::Route& route) {
+bool Server::getRoute(const std::string& path, Protocol::Table::Item method, Server::Route& route) {
 	for (const Route& value : _routes) {
-		if (value.path == path && value.method == method) {
+		if (value.path == path && value.method.id == method.id) {
 			route = value;
 			return true;
 		}
@@ -65,23 +65,23 @@ void Server::_process(int socket_in) {
 	Response response(socket_in);
 
 	if (!request.isValid()) {
-		response.sendError(Status::BadRequest, "Invalid request.");
+		response.sendError(Protocol::Status("BadRequest"), "Invalid request.");
 		return;
 	}
 
 	std::string path = request.getPath();
-	Struct::Methods method = request.getMethod();
+	Protocol::Table::Item method = request.getMethod();
 
 	Server::Route route;
 	if (!getRoute(path, method, route)) {
-		response.sendError(Status::Forbidden, "Path invalid/not found.");
+		response.sendError(Protocol::Status("Forbidden"), "Path invalid/not found.");
 		return;
 	}
 
 	route.callback(&request, &response);
 
 	if (!response.wasSent()) {
-		response.sendError(Status::ServiceUnavailable, "Resource was not found or can't respond now.");
+		response.sendError(Protocol::Status("ServiceUnavailable"), "Resource was not found or can't respond now.");
 	}
 
 	return;

@@ -12,7 +12,7 @@
 #include "consumer.h"
 #include "request.h"
 #include "response.h"
-#include "struct.hpp"
+#include "packet.hpp"
 
 class Server {
 	public:
@@ -21,19 +21,19 @@ class Server {
 
 		struct Route {
 			std::string path;
-			Struct::Methods method;
+			Protocol::Table::Item method;
 			std::function<void (Request*, Response*)> callback;
 
 			bool isValid() {
 				if (!path.length()) return false;
-				if (method < Struct::Methods::FIRST || method > Struct::Methods::LAST) return false;
+				if (method.id < 1) return false;
 				if (callback == nullptr) return false;
 				return true;
 			}
 		};
 
-		bool setRoute(const std::string& path, Struct::Methods method, std::function<void(Request*, Response*)> callback);
-		bool getRoute(const std::string& path, Struct::Methods method, Route& route);
+		bool setRoute(const std::string& path, Protocol::Table::Item method, std::function<void(Request*, Response*)> callback);
+		bool getRoute(const std::string& path, Protocol::Table::Item method, Route& route);
 
 		bool start();
 		bool stop();

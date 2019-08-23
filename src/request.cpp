@@ -44,8 +44,8 @@ bool Request::_parseData(const std::string& data, Struct::Attributes& attributes
 	std::vector<std::string> parsed_header = Text::split(header, std::string(" "));
 	if (parsed_header.size() < 2) return false;
 
-	Struct::Methods method = Struct::parseMethod(parsed_header[0]);
-	if (method == Struct::Methods::NONE) return false;
+	Protocol::Table::Item method = Protocol::Method(parsed_header[0]);
+	if (method.id < 1) return false;
 
 	std::string path = parsed_header[1];
 

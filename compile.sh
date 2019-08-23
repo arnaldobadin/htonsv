@@ -14,8 +14,8 @@ sudo g++ \
 		./src/consumer.h ./src/consumer.cpp \
 		./src/request.h ./src/request.cpp \
 		./src/response.h ./src/response.cpp \
-		./src/struct.hpp \
-		./src/status.hpp \
+		./src/packet.hpp \
+		./src/protocol.hpp \
 		./src/text.hpp \
 	-I examples \
 		./examples/simple-server.cpp \

@@ -24,9 +24,9 @@ int main(int argc, char* argv[]) {
 
 	std::unique_ptr<Server> server(new Server(port));
 
-	server->setRoute("/status", Struct::Methods::GET, sendStatus);
-	server->setRoute("/mirror", Struct::Methods::POST, mirrorData);
-	server->setRoute("/block", Struct::Methods::GET, blockThread);
+	server->setRoute("/status", Protocol::Method("GET"), sendStatus);
+	server->setRoute("/mirror", Protocol::Method("POST"), mirrorData);
+	server->setRoute("/block", Protocol::Method("GET"), blockThread);
 
 	server->start();
 

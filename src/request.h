@@ -10,7 +10,7 @@
 #include <regex>
 #include <json.hpp>
 
-#include "struct.hpp"
+#include "packet.hpp"
 #include "text.hpp"
 
 using json = nlohmann::json;
@@ -22,7 +22,7 @@ class Request {
 
 		bool isValid() const;
 		std::string getPath() const {return _attributes.path;}
-		Struct::Methods getMethod() const {return _attributes.method;}
+		Protocol::Table::Item getMethod() const {return _attributes.method;}
 		const std::unordered_map<std::string, std::string>& getHeaders() const {return _attributes.headers;}
 		const std::string& getHeader(const std::string& header) {return _attributes.headers[header];}
 		const json& getBody() const {return _attributes.body;}
