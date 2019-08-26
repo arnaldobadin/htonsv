@@ -1,4 +1,4 @@
-#include "external.hpp"
+#include <server/server.h>
 
 void sendStatus(Request* request, Response* response) {
 	json payload;

@@ -6,6 +6,21 @@
 
 namespace Protocol {
 
+	struct Item {
+		unsigned int id;
+		std::string name;
+
+		Item() {
+			this->id = 0;
+			this->name = "None";
+		}
+
+		Item(unsigned int id, std::string name) {
+			this->id = id;
+			this->name = name;
+		}
+	};
+
 	namespace {
 		static const std::map<const unsigned int, const std::string> _methods = {
 			{0, "None"}, {1, "GET"}, {2, "POST"}
