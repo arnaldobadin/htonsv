@@ -97,6 +97,8 @@ Just a simple HTTP JSON Server;
 
 ### Todo:
 
+- [ ] Make it cross-platform;
+- [ ] Add cmake;
 - [ ] Review _processRequest (Server);
 - [ ] Review todo;
 - [ ] Add this to all class members [should i?];
