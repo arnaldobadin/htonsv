@@ -8,10 +8,10 @@
 #include <vector>
 #include <unordered_map>
 #include <regex>
-#include <json.hpp>
 
-#include "packet.hpp"
-#include "text.hpp"
+#include "json/json.hpp"
+#include "server/packet.hpp"
+#include "server/text.hpp"
 
 using json = nlohmann::json;
 

@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "packet.hpp"
+#include "server/packet.hpp"
 
 class Response {
 	public:

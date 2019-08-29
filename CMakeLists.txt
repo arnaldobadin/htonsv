@@ -2,58 +2,50 @@ cmake_minimum_required(VERSION "3.9")
 
 set(PROJECT_NAME "simple-http-json-server")
 set(PROJECT_VERSION "1.0.0")
+set(LIBRARY_NAME "htonsv")
+set(EXECUTABLE_NAME "something")
 
 project(
 	"${PROJECT_NAME}"
 	VERSION "${PROJECT_VERSION}"
-	DESCRIPTION "Just a simple HTTP JSON Server."
+	DESCRIPTION "An easier way to communicate."
 )
-
-set(LIBRARY_NAME "server")
 
 add_library("${LIBRARY_NAME}" STATIC
-	lib/json.hpp
-	src/server.h
-	src/server.cpp
-	src/listener.h
-	src/listener.cpp
-	src/consumer.h
-	src/consumer.cpp
-	src/request.h
-	src/request.cpp
-	src/response.h
-	src/response.cpp
-	src/packet.hpp
-	src/protocol.hpp
-	src/text.hpp
+	include/htonsv.hpp
+	source/json/json.hpp
+	source/server/server.h
+	source/server/server.cpp
+	source/server/listener.h
+	source/server/listener.cpp
+	source/server/consumer.h
+	source/server/consumer.cpp
+	source/server/request.h
+	source/server/request.cpp
+	source/server/response.h
+	source/server/response.cpp
+	source/server/packet.hpp
+	source/server/protocol.hpp
+	source/server/text.hpp
 )
 
-set_target_properties("${LIBRARY_NAME}" PROPERTIES
-	VERSION ${PROJECT_VERSION}
-	SOVERSION 1
-	PUBLIC_HEADER api/server.h
+target_include_directories("${LIBRARY_NAME}"
+    PUBLIC 
+        $<INSTALL_INTERFACE:include>    
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/source/
 )
 
 include(GNUInstallDirs)
 
+find_package(Threads)
+target_link_libraries("${LIBRARY_NAME}" "${CMAKE_THREAD_LIBS_INIT}")
+
 configure_file(cmake/server.pc.in server.pc @ONLY)
 
-target_include_directories("${LIBRARY_NAME}" PRIVATE lib)
-target_include_directories("${LIBRARY_NAME}" PRIVATE src)
+add_executable("${EXECUTABLE_NAME}" external.cpp)
 
-target_link_libraries("${LIBRARY_NAME}" pthread)
+target_link_libraries("${EXECUTABLE_NAME}" "${LIBRARY_NAME}")
 
-#set_target_properties("${LIBRARY_NAME}" PROPERTIES PREFIX "")
-#set_target_properties("${LIBRARY_NAME}" PROPERTIES OUTPUT_NAME "${LIBRARY_NAME}")
-#set_target_properties("${LIBRARY_NAME}" PROPERTIES SUFFIX ".lib")
-
-install(TARGETS "${LIBRARY_NAME}"
-	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/api
-)
-
-install(
-	FILES ${CMAKE_BINARY_DIR}/server.pc
-	DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig
-)
+install(TARGETS "${EXECUTABLE_NAME}" DESTINATION bin)

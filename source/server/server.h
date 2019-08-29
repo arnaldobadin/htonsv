@@ -9,10 +9,10 @@
 #include <atomic>
 #include <memory>
 
-#include "consumer.h"
-#include "request.h"
-#include "response.h"
-#include "packet.hpp"
+#include "server/consumer.h"
+#include "server/request.h"
+#include "server/response.h"
+#include "server/packet.hpp"
 
 class Server {
 	public:

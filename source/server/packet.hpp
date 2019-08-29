@@ -1,9 +1,8 @@
 #ifndef PACKET_H
 #define PACKET_H
 
-#include <json.hpp>
-
-#include "protocol.hpp"
+#include "json/json.hpp"
+#include "server/protocol.hpp"
 
 using json = nlohmann::json;
 
