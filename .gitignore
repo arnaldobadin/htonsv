@@ -1,5 +1,9 @@
 # ignore all build
 build/*
+/build/*
+build/**
+cmake/build/*
+*/build/*
 
 # ignore pre-compiled headers
 *.gch
