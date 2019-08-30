@@ -1,5 +1,5 @@
-#ifndef PROTOCOL_H
-#define PROTOCOL_H
+#ifndef PROTOCOL_HPP
+#define PROTOCOL_HPP
 
 #include <string>
 #include <map>

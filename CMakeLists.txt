@@ -2,50 +2,59 @@ cmake_minimum_required(VERSION "3.9")
 
 set(PROJECT_NAME "simple-http-json-server")
 set(PROJECT_VERSION "1.0.0")
+
 set(LIBRARY_NAME "htonsv")
-set(EXECUTABLE_NAME "something")
+set(LIBRARY_VERSION "1.0.0")
 
 project(
 	"${PROJECT_NAME}"
 	VERSION "${PROJECT_VERSION}"
-	DESCRIPTION "An easier way to communicate."
+	DESCRIPTION "Just an easier way to communicate."
 )
+
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 add_library("${LIBRARY_NAME}" STATIC
-	include/htonsv.hpp
-	source/json/json.hpp
-	source/server/server.h
 	source/server/server.cpp
-	source/server/listener.h
 	source/server/listener.cpp
-	source/server/consumer.h
 	source/server/consumer.cpp
-	source/server/request.h
 	source/server/request.cpp
-	source/server/response.h
 	source/server/response.cpp
-	source/server/packet.hpp
-	source/server/protocol.hpp
-	source/server/text.hpp
 )
 
-target_include_directories("${LIBRARY_NAME}"
-    PUBLIC 
-        $<INSTALL_INTERFACE:include>    
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/source/
+set_target_properties("${LIBRARY_NAME}" PROPERTIES
+	VERSION "${LIBRARY_VERSION}"
+	SOVERSION 1
 )
 
 include(GNUInstallDirs)
 
-find_package(Threads)
-target_link_libraries("${LIBRARY_NAME}" "${CMAKE_THREAD_LIBS_INIT}")
+target_include_directories("${LIBRARY_NAME}"
+	PUBLIC
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+		$<INSTALL_INTERFACE:include>
+	PRIVATE
+		${CMAKE_CURRENT_SOURCE_DIR}/source
+)
 
-configure_file(cmake/server.pc.in server.pc @ONLY)
+find_package(Threads REQUIRED)
+target_link_libraries("${LIBRARY_NAME}" PUBLIC Threads::Threads)
 
-add_executable("${EXECUTABLE_NAME}" external.cpp)
+configure_file(cmake/${LIBRARY_NAME}.pc.in ${LIBRARY_NAME}.pc @ONLY)
 
-target_link_libraries("${EXECUTABLE_NAME}" "${LIBRARY_NAME}")
+install(TARGETS "${LIBRARY_NAME}"
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
 
-install(TARGETS "${EXECUTABLE_NAME}" DESTINATION bin)
+install(
+	FILES ${CMAKE_BINARY_DIR}/${LIBRARY_NAME}.pc
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig
+)
+
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+	FILES_MATCHING PATTERN "*.h*"
+)

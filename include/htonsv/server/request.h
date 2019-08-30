@@ -9,9 +9,9 @@
 #include <unordered_map>
 #include <regex>
 
-#include "json/json.hpp"
-#include "server/packet.hpp"
-#include "server/text.hpp"
+#include "htonsv/json/json.hpp"
+#include "htonsv/server/packet.hpp"
+#include "htonsv/server/text.hpp"
 
 using json = nlohmann::json;
 
