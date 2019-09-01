@@ -29,7 +29,7 @@ bool Consumer::start() {
 	_status = true;
 
 	_thread_consume = std::thread(&Consumer::_consume, this, "consumer");
-	for (unsigned int i = 0; i < _thread_count; i++) {
+	for (size_t i = 0; i < _thread_count; i++) {
 		_threads_process.push_back(
 			std::thread(&Consumer::_process, this, ("worker-" + std::to_string(i)))
 		);

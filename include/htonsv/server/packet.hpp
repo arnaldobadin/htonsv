@@ -12,13 +12,13 @@ class Struct {
 			const std::string version = "HTTP/1.1";
 
 			std::string path;
-			Protocol::Table::Item method;
-			Protocol::Table::Item code;
+			Protocol::Item method;
+			Protocol::Item code;
 			std::unordered_map<std::string, std::string> headers;
 			json body;
 
 			Attributes() {
-				code = Protocol::Status("InternalServerError");
+				code = Protocol::Codes(Protocol::Code::INTERNAL_SERVER_ERROR);
 				body = json::value_t::object;
 			}
 

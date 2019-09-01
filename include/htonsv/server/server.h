@@ -21,7 +21,7 @@ class Server {
 
 		struct Route {
 			std::string path;
-			Protocol::Table::Item method;
+			Protocol::Item method;
 			std::function<void (Request*, Response*)> callback;
 
 			bool isValid() {
@@ -32,8 +32,8 @@ class Server {
 			}
 		};
 
-		bool setRoute(const std::string& path, Protocol::Table::Item method, std::function<void(Request*, Response*)> callback);
-		bool getRoute(const std::string& path, Protocol::Table::Item method, Route& route);
+		bool setRoute(const std::string& path, Protocol::Item method, std::function<void(Request*, Response*)> callback);
+		bool getRoute(const std::string& path, Protocol::Item method, Route& route);
 
 		bool start();
 		bool stop();

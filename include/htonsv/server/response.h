@@ -14,14 +14,14 @@ class Response {
 		~Response();
 
 		bool wasSent() const {return _sent;}
-		void setCode(Protocol::Table::Item code) {_attributes.code = code;}
+		void setCode(Protocol::Item code) {_attributes.code = code;}
 		void setHeader(std::string key, std::string value) {_attributes.headers[key] = value;}
 		void setBody(json body) {_attributes.body = body;}
 		void clearHeaders() {_attributes.headers.clear();}
 		void clearBody() {_attributes.body = json::value_t::object;}
 
 		bool sendSuccess();
-		bool sendError(Protocol::Table::Item code, const std::string& message);
+		bool sendError(Protocol::Item code, const std::string& message);
 
 	private:
 		int _socket;

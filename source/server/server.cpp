@@ -13,7 +13,7 @@ Server::~Server() {
 	stop();
 }
 
-bool Server::setRoute(const std::string& path, Protocol::Table::Item method, std::function<void(Request*, Response*)> callback) {
+bool Server::setRoute(const std::string& path, Protocol::Item method, std::function<void(Request*, Response*)> callback) {
 	for (const Route& value : _routes) {
 		if (value.path == path && value.method.id == method.id) {
 			return false;
@@ -27,7 +27,7 @@ bool Server::setRoute(const std::string& path, Protocol::Table::Item method, std
 	return true;
 }
 
-bool Server::getRoute(const std::string& path, Protocol::Table::Item method, Server::Route& route) {
+bool Server::getRoute(const std::string& path, Protocol::Item method, Server::Route& route) {
 	for (const Route& value : _routes) {
 		if (value.path == path && value.method.id == method.id) {
 			route = value;
@@ -65,23 +65,23 @@ void Server::_process(int socket_in) {
 	Response response(socket_in);
 
 	if (!request.isValid()) {
-		response.sendError(Protocol::Status("BadRequest"), "Invalid request.");
+		response.sendError(Protocol::Codes(Protocol::Code::BAD_REQUEST), "Invalid request.");
 		return;
 	}
 
 	std::string path = request.getPath();
-	Protocol::Table::Item method = request.getMethod();
+	Protocol::Item method = request.getMethod();
 
 	Server::Route route;
 	if (!getRoute(path, method, route)) {
-		response.sendError(Protocol::Status("Forbidden"), "Path invalid/not found.");
+		response.sendError(Protocol::Codes(Protocol::Code::FORBIDDEN), "Path invalid/not found.");
 		return;
 	}
 
 	route.callback(&request, &response);
 
 	if (!response.wasSent()) {
-		response.sendError(Protocol::Status("ServiceUnavailable"), "Resource was not found or can't respond now.");
+		response.sendError(Protocol::Codes(Protocol::Code::SERVICE_UNAVAILABLE), "Resource was not found or can't respond now.");
 	}
 
 	return;
