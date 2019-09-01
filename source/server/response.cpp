@@ -4,76 +4,24 @@ Response::Response(int socket_in) :
 	_socket(socket_in),
 	_sent(false)
 {
-
+	_packet.code = Protocol::Codes(Protocol::Code::NOT_FOUND);
+	_packet.body = json::value_t::object;
 }
 
 Response::~Response() {
 	
 }
 
-bool Response::sendSuccess() {
-	setCode(Protocol::Codes(Protocol::Code::OK));
-	setHeader("Connection", "Closed");
-	return _sendPayload();
+bool Response::sent() const {
+	return _sent;
 }
 
-bool Response::sendError(Protocol::Item code, const std::string& message) {
-	setCode(code);
-	clearHeaders();
-	clearBody();
-
-	setHeader("Connection", "Closed");
-
-	json body;
-	body["error"] = {};
-	body["error"]["code"] = code.id;
-	body["error"]["message"] = message;
-
-	setBody(body);
-	return _sendPayload();
-}
-
-bool Response::_sendPayload() {
-	if (_sent) return false;
-
-	setHeader("Server", "Dark");
-	setHeader("Content-Type", "application/json");
-
-	std::string payload;
-	if (!_createPayload(payload)) {
-		return false;
-	}
+bool Response::_send() {
+	std::string payload = _packet.out();
 
 	if (write(_socket, payload.c_str(), payload.size()) < 1) {
 		return false;
 	}
 
-	_sent = true;
 	return true;
-}
-
-bool Response::_createPayload(std::string& payload) {
-	std::string current_payload;
-    std::string data = _attributes.body.dump(4);
-
-    int data_length = data.size();
-
-	if (data_length) {
-		_attributes.headers["Content-Length"] = std::to_string(data_length);
-	}
-
-	current_payload += _attributes.version + " " + std::to_string(_attributes.code.id) + " " + _attributes.code.name + "\r\n";
-
-    std::unordered_map<std::string, std::string>::iterator iterator;
-    for (iterator = _attributes.headers.begin(); iterator != _attributes.headers.end(); iterator++) {
-        std::string key = iterator->first;
-        std::string value = iterator->second;
-
-        current_payload += key + ": " + value + "\r\n";
-    }
-
-    if (data_length) current_payload += "\r\n" + data + "\r\n\r\n";
-
-    payload = current_payload;
-    return true;
 }

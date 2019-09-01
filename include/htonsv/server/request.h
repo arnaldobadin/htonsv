@@ -9,9 +9,7 @@
 #include <unordered_map>
 #include <regex>
 
-#include "htonsv/json/json.hpp"
 #include "htonsv/server/packet.hpp"
-#include "htonsv/server/text.hpp"
 
 using json = nlohmann::json;
 
@@ -20,22 +18,29 @@ class Request {
 		Request(int socket, unsigned int buffer_size = 1024);
 		~Request();
 
+		static const unsigned int BUFFER_SIZE_DEFAULT = 1024;
+
 		bool isValid() const;
-		std::string getPath() const {return _attributes.path;}
-		Protocol::Item getMethod() const {return _attributes.method;}
-		const std::unordered_map<std::string, std::string>& getHeaders() const {return _attributes.headers;}
-		const std::string& getHeader(const std::string& header) {return _attributes.headers[header];}
-		const json& getBody() const {return _attributes.body;}
+
+		std::string getPath() const {return _packet.path;}
+		Protocol::Item getMethod() const {return _packet.method;}
+		std::string getHeader(const std::string& header) {return _packet.headers[header];}
+		json getBody() const {return _packet.body;}
+
+		bool valid() const;
+		bool load();
 
 	private:
 		int _socket;
 		unsigned int _buffer_size;
-		std::string _data;
-		Struct::Attributes _attributes;
-		bool _status;
 
-		std::string _receiveData(int sock_in);
-		bool _parseData(const std::string& data, Struct::Attributes& attributes);
+		bool _status;
+		
+		std::string _data;
+		Packet::Item _packet;
+
+		bool _receive();
+		bool _transform();
 };
 
 #endif

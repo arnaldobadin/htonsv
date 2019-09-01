@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION "3.9")
 
-set(PROJECT_NAME "simple-http-json-server")
+set(PROJECT_NAME "project-scope")
 set(PROJECT_VERSION "1.0.0")
 
 set(LIBRARY_NAME "htonsv")

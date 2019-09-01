@@ -5,6 +5,7 @@
 #include <vector>
 
 namespace Protocol {
+	const std::string HTTP_VERSION = "HTTP/1.1";
 
 	struct Item {
 		unsigned int id = 0;
@@ -72,20 +73,18 @@ namespace Protocol {
 			{510, "NotExtended"}, {511, "NetworkAuthenticationRequired"}
 		};
 
-		inline Protocol::Item find(const std::vector<Item>& items, unsigned int id) {
+		inline Item find(const std::vector<Item>& items, unsigned int id) {
 			for (size_t i = 0; i < items.size(); i++) {
 				if (id == items[i].id) return items[i];
 			}
-			Item item;
-			return item;
+			return (struct Item){};
 		}
 
-		inline Protocol::Item find(const std::vector<Item>& items, const std::string& name) {
+		inline Item find(const std::vector<Item>& items, const std::string& name) {
 			for (size_t i = 0; i < items.size(); i++) {
 				if (name == items[i].name) return items[i];
 			}
-			Item item;
-			return item;
+			return (struct Item){};
 		}
 	}
 

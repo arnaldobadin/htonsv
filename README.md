@@ -97,20 +97,23 @@ Just a simple HTTP JSON Server;
 
 ### Todo:
 
+- [ ] Make Req/Res pointers i guess -- look for overhead heap vs stack in runtime -- */
 - [ ] Make it cross-platform;
-- [ ] Add cmake;
+- [ ] Check cmake pthread compile needs;
 - [ ] Review _processRequest (Server);
 - [ ] Review todo;
 - [ ] Add this to all class members [should i?];
 - [ ] Review Request and Response;
 - [ ] Think another way to handle PAYLOADS (sendSuccess, etc);
 - [ ] Think a better way to store Requests and Response's attr;
-- [ ] Fix "status.h";
-- [ ] Fix "struct.h";
 - [ ] Add portable version;
 - [ ] Test framework;
 - [ ] Pass compiled tags "pendantic";
 - [ ] Update documentation;
+- [ ] Remake response.h -- missing functions and functionality --;
+- [x] Fix "struct.h";
+- [x] Add cmake;
+- [x] Fix "status.h" -- now is protocol.hpp --;
 - [x] Set all _status to atomic;
 - [x] Change listener and server triggers;
 - [x] Add a new class (consumer) and remake server;

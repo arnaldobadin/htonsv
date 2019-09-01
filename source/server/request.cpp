@@ -5,77 +5,38 @@ Request::Request(int socket, unsigned int buffer_size) :
 	_buffer_size(buffer_size),
 	_status(false)
 {
-	_data = _receiveData(_socket);
-	if (!_data.length()) return;
-
-	bool result;
-	result = _parseData(_data, _attributes);
-
-	if (!result) return;
-	if (!_attributes.isValidRequest()) return;
-
-	_status = true;
+	if (_buffer_size < BUFFER_SIZE_DEFAULT) {
+		_buffer_size = BUFFER_SIZE_DEFAULT;
+	}
 }
 
 Request::~Request() {
 
 }
 
-bool Request::isValid() const {
+bool Request::valid() const {
 	return _status;
 }
 
-std::string Request::_receiveData(int sock_in) {
+bool Request::load() {
+	if (_status) return false;
+
+	if (!(_receive() && _transform())) return false;
+	return _status = true;
+}
+
+bool Request::_receive() {
 	std::vector<char> buffer(_buffer_size);
-	read(sock_in, buffer.data(), buffer.size());
-	return std::string(buffer.data(), buffer.size());
+	
+	read(_socket, buffer.data(), buffer.size());
+
+	_data = std::string(buffer.data(), buffer.size());
+
+	if (!_data.length()) return false;
+	return true;
 }
 
-bool Request::_parseData(const std::string& data, Struct::Attributes& attributes) {
-	std::string delimiter = "\r\n";
-	std::vector<std::string> rows = Text::split(data, delimiter);
-	if (!rows.size()) return false;
-
-	std::string header = rows[0];
-	rows.erase(rows.begin());
-
-	if (!header.length()) return false;
-
-	std::vector<std::string> parsed_header = Text::split(header, std::string(" "));
-	if (parsed_header.size() < 2) return false;
-
-	Protocol::Item method = Protocol::Methods(parsed_header[0]);
-	if (method.id < 1) return false;
-
-	std::string path = parsed_header[1];
-
-	std::unordered_map<std::string, std::string> headers;
-	for (size_t i = 0; i < rows.size(); i++) {
-		std::string row = rows[i];
-		delimiter = ":";
-
-		std::vector<std::string> splited = Text::split(row, delimiter);
-		if (splited.size() != 2) continue;
-
-		headers[splited[0]] = splited[1];
-	}
-
-	attributes.method = method;
-	attributes.path = path;
-	attributes.headers = headers;
-    attributes.body = json::value_t::object;
-
-    int data_length = strlen(data.c_str());
-
-	std::string content_length = headers["Content-Length"];
- 	int content_size = atoi(content_length.c_str());
-    if (!content_size) return false;
-
-    std::string body = data.substr(data_length - content_size, data_length);
-    json parsed = json::parse(body, nullptr, false);
-    if (parsed == NULL || parsed.is_discarded()) return true;
-
-    attributes.body = parsed;
-    return true;
+bool Request::_transform() {
+	if (!_data.length()) return false;
+	return _packet.in(_data);
 }
-

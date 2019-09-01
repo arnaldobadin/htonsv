@@ -21,7 +21,7 @@ bool Server::setRoute(const std::string& path, Protocol::Item method, std::funct
 	}
 
 	Server::Route route = {path, method, callback};
-	if (!route.isValid()) return false;
+	if (!route.valid()) return false;
 
 	_routes.push_back(route);
 	return true;
@@ -64,8 +64,8 @@ void Server::_process(int socket_in) {
 	Request request(socket_in);
 	Response response(socket_in);
 
-	if (!request.isValid()) {
-		response.sendError(Protocol::Codes(Protocol::Code::BAD_REQUEST), "Invalid request.");
+	if (!request.valid()) {
+		/* response.sendError(Protocol::Codes(Protocol::Code::BAD_REQUEST), "Invalid request."); */
 		return;
 	}
 
@@ -74,14 +74,14 @@ void Server::_process(int socket_in) {
 
 	Server::Route route;
 	if (!getRoute(path, method, route)) {
-		response.sendError(Protocol::Codes(Protocol::Code::FORBIDDEN), "Path invalid/not found.");
+		/* response.sendError(Protocol::Codes(Protocol::Code::FORBIDDEN), "Path invalid/not found."); */
 		return;
 	}
 
 	route.callback(&request, &response);
 
-	if (!response.wasSent()) {
-		response.sendError(Protocol::Codes(Protocol::Code::SERVICE_UNAVAILABLE), "Resource was not found or can't respond now.");
+	if (!response.sent()) {
+		/* response.sendError(Protocol::Codes(Protocol::Code::SERVICE_UNAVAILABLE), "Resource was not found or can't respond now."); */
 	}
 
 	return;

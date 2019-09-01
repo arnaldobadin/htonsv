@@ -24,16 +24,17 @@ class Server {
 			Protocol::Item method;
 			std::function<void (Request*, Response*)> callback;
 
-			bool isValid() {
-				if (!path.length()) return false;
-				if (method.id < 1) return false;
-				if (callback == nullptr) return false;
-				return true;
+			bool valid() {
+				return (path.length() && method.id > 0 && callback != nullptr);
 			}
 		};
 
 		bool setRoute(const std::string& path, Protocol::Item method, std::function<void(Request*, Response*)> callback);
 		bool getRoute(const std::string& path, Protocol::Item method, Route& route);
+
+		template <typename... Args> auto route(Args&&... args) const -> decltype(setRoute(std::forward<Args>(args)...)) {
+			return setRoute(std::forward<Args>(args)...);
+		}
 
 		bool start();
 		bool stop();

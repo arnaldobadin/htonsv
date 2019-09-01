@@ -13,24 +13,16 @@ class Response {
 		Response(int socket_in);
 		~Response();
 
-		bool wasSent() const {return _sent;}
-		void setCode(Protocol::Item code) {_attributes.code = code;}
-		void setHeader(std::string key, std::string value) {_attributes.headers[key] = value;}
-		void setBody(json body) {_attributes.body = body;}
-		void clearHeaders() {_attributes.headers.clear();}
-		void clearBody() {_attributes.body = json::value_t::object;}
-
-		bool sendSuccess();
-		bool sendError(Protocol::Item code, const std::string& message);
+		bool sent() const;
 
 	private:
 		int _socket;
+
 		bool _sent;
 
-		Struct::Attributes _attributes;
+		Packet::Item _packet;
 
-		bool _sendPayload();
-		bool _createPayload(std::string& payload);
+		bool _send();
 };
 
 #endif
