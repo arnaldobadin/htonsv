@@ -97,6 +97,8 @@ Just a simple HTTP JSON Server;
 
 ### Todo:
 
+- [ ] Fix transferred a partial file "Response.h";
+- [ ] Fix head->>tail<< in requests, extend lifetime and keep connection alive until TIMEOUT or specific shutdown;
 - [ ] Make Req/Res pointers i guess -- look for overhead heap vs stack in runtime -- */
 - [ ] Make it cross-platform;
 - [ ] Check cmake pthread compile needs;

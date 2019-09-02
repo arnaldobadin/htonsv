@@ -62,7 +62,7 @@ namespace Packet {
 
 		std::string content_length = headers["Content-Length"];
 		int content_size = atoi(content_length.c_str());
-		if (!content_size) return false;
+		if (!content_size) return true;
 
 		std::string body = data.substr(data_length - content_size, data_length);
 		json parsed = json::parse(body, nullptr, false);

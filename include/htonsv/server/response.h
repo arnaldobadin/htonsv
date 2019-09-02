@@ -15,11 +15,19 @@ class Response {
 
 		bool sent() const;
 
+		bool code(Protocol::Code code);
+		bool header(const std::string& key, const std::string& value);
+		bool body(const json& body);
+
+		void clear();
+		bool error(Protocol::Code code, const std::string& message);
+		bool send();
+		bool send(const json& body);
+
 	private:
 		int _socket;
 
 		bool _sent;
-
 		Packet::Item _packet;
 
 		bool _send();
