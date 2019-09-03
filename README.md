@@ -1,4 +1,4 @@
-# Simple HTTP JSON Server
+# HTONSV - Simple HTTP JSON Server
 
 Just a simple HTTP JSON Server;
 
