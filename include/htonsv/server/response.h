@@ -20,6 +20,7 @@ class Response {
 		bool body(const json& body);
 
 		void clear();
+		bool error(Protocol::Code code);
 		bool error(Protocol::Code code, const std::string& message);
 		bool send();
 		bool send(const json& body);

@@ -73,19 +73,18 @@ void Server::_process(int socket_in) {
 		return;
 	}
 
-	std::string path = request.getPath();
-	Protocol::Item method = request.getMethod();
+	std::string path = request.path();
+	Protocol::Item method = request.method();
 
 	Server::Route route;
 	if (!_getRoute(path, method, route)) {
-		response.error(Protocol::Code::FORBIDDEN, "Path invalid/not found.");
+		response.error(Protocol::Code::NOT_FOUND, "Path or/and method invalid/not found.");
 		return;
 	}
 
 	route.callback(&request, &response);
 
 	if (!response.sent()) {
-		response.clear();
 		response.error(Protocol::Code::SERVICE_UNAVAILABLE,
 			"Service/resource was not found or can't respond now."
 		);

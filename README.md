@@ -2,117 +2,129 @@
 
 Just a simple HTTP JSON Server;
 
+### Setup:
+
+```bash
+mkdir build && cd build
+cmake ..
+sudo make install
+```
+
 ### Usage:
 
-> Requiring:
+> Including:
 ```cpp
-	#include "external.hpp"
+#include <htonsv/htonsv.hpp>
 ```
 
 > Setting up server:
 ```cpp
-	int port = 5000;
+uint16_t port = 5000;
 
-	/* declare Server instance */
-	Server server(port);
+/* declare Server instance */
+Server server(port);
 
-	/* set a route (entry) */
-	server.setRoute("/status", Struct::Methods::GET, sendStatus);
+/* set a route (entry) */
+server.route("/status", Protocol::Method::GET, sendStatus);
+server.route("/something", Protocol::Method::POST, doSomething);
 
-	/* start server */
-	server.start();
+/* start server */
+server.start();
 
-	/* block current thread */
-	while (true) {}
+/* block current thread */
+while (true) {}
 ```
 
 > You can add routes, taking the path, method and function to be execute:
 ```cpp
-	/* you must to declare the functions */
+/* you must to declare the functions */
 
-	void sendStatus(Request* request, Response* response) {
-		/* create a JSON object that will be sent in response */
-		json payload;
-		payload["message"] = "Server is running without a problem.";
+void sendStatus(Request* request, Response* response) {
+	/* create a JSON object that will be sent in response */
+	json payload;
+	payload["message"] = "Server is running without a problem.";
 
-		/* set data to send on response */
-		response->setBody(payload);
-		/* unique call */
-		response->sendSuccess();
+	/* set data to send on response */
+	response->body(payload);
+	/* unique call */
+	response->send();
+}
+
+void doSomething(Request* request, Response* response) {
+	/* get request input (user's input) -- coming as JSON object -- */
+	json data = request->body();
+
+	/* check field that came from request's payload */
+	if (!data["field"]) {
+		/* send error */
+		response->error(Protocol::Code::BAD_REQUEST, "Missing some field.");
+		return;
 	}
 
-	void doSomething(Request* request, Response* response) {
-		/* get request input (user's input) -- coming as JSON object -- */
-		json data = request->getBody();
+	/* set data to send on response -- just mirroing -- */
+	response->body(data);
+	response->code(Protocol::Code::OK);
+	/* unique call */
+	response->send();
+}
 
-		/* set data to send on response -- just mirroing -- */
-		response->setBody(data);
-		/* unique call */
-		response->sendSuccess();
-	}
-
-	/* set routes (entries) */
-	server.setRoute("/status", Struct::Methods::GET, sendStatus);
-	server.setRoute("/status", Struct::Methods::POST, doSomething);
+/* set routes (entries) */
+server.route("/status", Protocol::Method::GET, sendStatus);
+server.route("/something", Protocol::Method::POST, doSomething);
 ```
 
 > 
 
 ### Example:
 
-> See examples folder:
 ```cpp
-	#include "external.hpp"
+#include <htonsv/htonsv.hpp>
 
-	void sendStatus(Request* request, Response* response) {
-		json payload;
-		payload["message"] = "Everything is working smoothly as possible.";
+void getStatus(Request* request, Response* response) {
+	json payload = {
+		{"status", true},
+		{"message", "Everything is fine."}
+	};
 
-		response->setBody(payload);
-		response->sendSuccess();
-	}
+	/* response->body(payload); or just */
+	response->send(payload);
+}
 
-	void mirrorData(Request* request, Response* response) {
-		json data = request->getBody();
+int main(int argc, char* argv[]) {
+	uint16_t port = 7777;
+	if (argc > 1) port = atoi(argv[1]);
 
-		response->setBody(data);
-		response->sendSuccess();
-	}
+	Server server(port);
+	
+	server.route("/status", Protocol::Method::GET, getStatus);
+	server.start();
 
-	int main(int argc, char* argv[]) {
-		int16_t port = 5000;
+	std::cout << "Server is running with success at port " << port << "." << std::endl;
 
-		std::unique_ptr<Server> server(new Server(port));
-
-		server->setRoute("/status", Struct::Methods::GET, sendStatus);
-		server->setRoute("/mirror", Struct::Methods::POST, mirrorData);
-
-		server->start();
-
-		while (true) {}
-
-		return 1;
-	}
+	while (true) {}
+	return 1;
+}
 ```
 
 ### Todo:
 
-- [ ] Fix transferred a partial file "Response.h";
 - [ ] Fix head->>tail<< in requests, extend lifetime and keep connection alive until TIMEOUT or specific shutdown;
-- [ ] Make Req/Res pointers i guess -- look for overhead heap vs stack in runtime -- */
 - [ ] Make it cross-platform;
 - [ ] Check cmake pthread compile needs;
-- [ ] Review _processRequest (Server);
 - [ ] Review todo;
-- [ ] Add this to all class members [should i?];
-- [ ] Review Request and Response;
-- [ ] Think another way to handle PAYLOADS (sendSuccess, etc);
-- [ ] Think a better way to store Requests and Response's attr;
+- [ ] Add "this" to all class members [should i?];
 - [ ] Add portable version;
 - [ ] Test framework;
 - [ ] Pass compiled tags "pendantic";
-- [ ] Update documentation;
-- [ ] Remake response.h -- missing functions and functionality --;
+- [ ] Upgrade documentation (make it fancy);
+- [x] Update documentation;
+- [x] Review Request and Response;
+- [x] Review _processRequest (Server);
+- [x] Think another way to handle PAYLOADS (sendSuccess, etc);
+- [x] Think a better way to store Requests and Response's attr;
+- [x] Remake response.h -- missing functions and functionality --;
+- [x] Make Req/Res pointers i guess -- look for overhead heap vs stack in runtime -- */
+- [x] Fix transferred a partial file "Response.h";
 - [x] Fix "struct.h";
 - [x] Add cmake;
 - [x] Fix "status.h" -- now is protocol.hpp --;

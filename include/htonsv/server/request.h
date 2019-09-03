@@ -22,10 +22,10 @@ class Request {
 
 		bool isValid() const;
 
-		std::string getPath() const {return _packet.path;}
-		Protocol::Item getMethod() const {return _packet.method;}
-		std::string getHeader(const std::string& header) {return _packet.headers[header];}
-		json getBody() const {return _packet.body;}
+		inline std::string path() const {return _packet.path;}
+		inline Protocol::Item method() const {return _packet.method;}
+		inline std::string header(const std::string& header) {return _packet.headers[header];}
+		inline json body() const {return _packet.body;}
 
 		bool valid() const;
 		bool load();

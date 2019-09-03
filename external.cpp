@@ -1,19 +1,19 @@
 #include <htonsv/htonsv.hpp>
 
 void getStatus(Request* request, Response* response) {
-	std::cout << "Requesting status." << std::endl;
-
-	json body = {
-		{"hellou", 10}
+	json payload = {
+		{"status", true},
+		{"message", "Everything is fine."}
 	};
 
-	response->body(body);
-	response->code(Protocol::Code::OK);
-	response->send();
+	/* response->body(payload); or just */
+	response->send(payload);
 }
 
 int main(int argc, char* argv[]) {
-	uint16_t port = 3636;
+	uint16_t port = 7777;
+	if (argc > 1) port = atoi(argv[1]);
+
 	Server server(port);
 	
 	server.route("/status", Protocol::Method::GET, getStatus);

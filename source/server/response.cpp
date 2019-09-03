@@ -4,7 +4,7 @@ Response::Response(int socket_in) :
 	_socket(socket_in),
 	_sent(false)
 {
-	_packet.code = Protocol::Codes(Protocol::Code::NOT_FOUND);
+	_packet.code = Protocol::Codes(Protocol::Code::OK);
 	_packet.body = json::value_t::object;
 }
 
@@ -38,6 +38,19 @@ void Response::clear() {
 	_packet = {};
 }
 
+bool Response::error(Protocol::Code code) {
+	clear();
+
+	if (!this->code(code)) return false;
+
+	json body = {{"status", false}};
+	body["error"] = {};
+	body["error"]["code"] = _packet.code.id;
+
+	if (!this->body(body)) return false;
+	return _send();
+}
+
 bool Response::error(Protocol::Code code, const std::string& message) {
 	clear();
 
@@ -62,13 +75,10 @@ bool Response::send(const json& body) {
 }
 
 bool Response::_send() {
-	header("Server", "Dark");
 	header("Content-Type", "application/json");
 	header("Connection", "Closed");
 
 	std::string payload = _packet.out();
-
-	std::cout << payload << std::endl;
 
 	if (write(_socket, payload.c_str(), payload.size()) < 1) {
 		return false;
