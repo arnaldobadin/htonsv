@@ -96,6 +96,6 @@ namespace Packet {
 
 		return payload;
 	}
-};
+}
 
 #endif

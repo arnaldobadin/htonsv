@@ -77,14 +77,14 @@ namespace Protocol {
 			for (size_t i = 0; i < items.size(); i++) {
 				if (id == items[i].id) return items[i];
 			}
-			return (struct Item){};
+			return {};
 		}
 
 		inline Item find(const std::vector<Item>& items, const std::string& name) {
 			for (size_t i = 0; i < items.size(); i++) {
 				if (name == items[i].name) return items[i];
 			}
-			return (struct Item){};
+			return {};
 		}
 	}
 
@@ -95,6 +95,6 @@ namespace Protocol {
 	inline Protocol::Item Codes(unsigned int id) {return find(_code_map, id);}
 	inline Protocol::Item Codes(Protocol::Code code) {return find(_code_map, static_cast<unsigned int>(code));}
 	inline Protocol::Item Codes(const std::string& name) {return find(_code_map, name);}
-};
+}
 
 #endif

@@ -3,8 +3,8 @@
 Listener::Listener(int16_t port, unsigned int max_connection_count) : 
 	_port(port),
 	_max_connection_count(max_connection_count),
-	_socket(-1),
-	_status(false)
+	_status(false),
+	_socket(-1)
 {
 	if (_max_connection_count == 0) {
 		throw std::invalid_argument("Max connections can't be none.");

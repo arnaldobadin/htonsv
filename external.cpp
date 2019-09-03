@@ -6,7 +6,6 @@ void getStatus(Request* request, Response* response) {
 		{"message", "Everything is fine."}
 	};
 
-	/* response->body(payload); or just */
 	response->send(payload);
 }
 

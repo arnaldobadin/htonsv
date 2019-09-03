@@ -1,3 +1,4 @@
+#g++ -W -Wall -Werror -Wextra -pedantic -O2 \
 g++ \
 	-I ./include \
 		./include/htonsv/json/json.hpp \
