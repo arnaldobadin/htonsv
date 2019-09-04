@@ -57,6 +57,8 @@ bool Consumer::stop() {
 			_thread_consume.join();
 		}
 
+		_condition.notify_all();
+
 		for (std::thread& thread_process : _threads_process) {
 			if (thread_process.joinable()) {
 				thread_process.join();
@@ -64,7 +66,6 @@ bool Consumer::stop() {
 		}
 	} catch(...) {}
 
-	_condition.notify_all();
 	return true;
 }
 

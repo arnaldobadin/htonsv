@@ -22,14 +22,14 @@ class Server {
 		struct Route {
 			std::string path;
 			Protocol::Item method;
-			std::function<void (Request*, Response*)> callback;
+			std::function<void (Request&, Response&)> callback;
 
 			bool valid() {
 				return (path.length() && method.id > 0 && callback != nullptr);
 			}
 		};
 
-		bool route(const std::string& path, Protocol::Method method, std::function<void(Request*, Response*)> callback);
+		bool route(const std::string& path, Protocol::Method method, std::function<void(Request&, Response&)> callback);
 
 		bool start();
 		bool stop();
@@ -42,7 +42,7 @@ class Server {
 		std::vector<Route> _routes;
 		std::unique_ptr<Consumer> _consumer;
 
-		bool _setRoute(const std::string& path, Protocol::Item method, std::function<void(Request*, Response*)> callback);
+		bool _setRoute(const std::string& path, Protocol::Item method, std::function<void(Request&, Response&)> callback);
 		bool _getRoute(const std::string& path, Protocol::Item method, Route& route);
 		void _process(int socket_in);
 };

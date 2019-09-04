@@ -35,12 +35,12 @@ bool Server::stop() {
 	return true;
 }
 
-bool Server::route(const std::string& path, Protocol::Method method, std::function<void(Request*, Response*)> callback) {
+bool Server::route(const std::string& path, Protocol::Method method, std::function<void(Request&, Response&)> callback) {
 	Protocol::Item item = Protocol::Methods(method);
 	return _setRoute(path, item, callback);
 }
 
-bool Server::_setRoute(const std::string& path, Protocol::Item method, std::function<void(Request*, Response*)> callback) {
+bool Server::_setRoute(const std::string& path, Protocol::Item method, std::function<void(Request&, Response&)> callback) {
 	for (const Route& value : _routes) {
 		if (value.path == path && value.method.id == method.id) {
 			return false;
@@ -82,7 +82,7 @@ void Server::_process(int socket_in) {
 		return;
 	}
 
-	route.callback(&request, &response);
+	route.callback(request, response);
 
 	if (!response.sent()) {
 		response.error(Protocol::Code::SERVICE_UNAVAILABLE,

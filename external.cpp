@@ -1,12 +1,12 @@
 #include <htonsv/htonsv.hpp>
 
-void getStatus(Request* request, Response* response) {
+void getStatus(Request& request, Response& response) {
 	json payload = {
 		{"status", true},
 		{"message", "Everything is fine."}
 	};
 
-	response->send(payload);
+	response.send(payload);
 }
 
 int main(int argc, char* argv[]) {
@@ -19,7 +19,9 @@ int main(int argc, char* argv[]) {
 	server.start();
 
 	std::cout << "Server is running with success at port " << port << "." << std::endl;
+	std::cout << "Hit any key to close it." << std::endl;
 
-	while (true) {}
+	std::cin.get();
+	std::cout << "Server closed with success." << std::endl;
 	return 1;
 }

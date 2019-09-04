@@ -25,7 +25,7 @@ class Consumer {
 		~Consumer();
 
 		static const unsigned int THREAD_COUNT_DEFAULT = 5;
-		static const unsigned int MAX_CONNECTION_COUNT_DEFAULT = 512;
+		static const unsigned int MAX_CONNECTION_COUNT_DEFAULT = 4096;
 
 		bool start();
 		bool stop();

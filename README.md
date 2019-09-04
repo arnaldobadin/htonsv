@@ -12,12 +12,12 @@ sudo make install
 
 ### Usage:
 
-> Including:
+Including:
 ```cpp
 #include <htonsv/htonsv.hpp>
 ```
 
-> Setting up server:
+Setting up server:
 ```cpp
 uint16_t port = 5000;
 
@@ -32,40 +32,40 @@ server.route("/something", Protocol::Method::POST, doSomething);
 server.start();
 
 /* block current thread */
-while (true) {}
+std::cin.get();
 ```
 
-> You can add routes, taking the path, method and function to be execute:
+You can add routes, taking the path, method and function to be execute:
 ```cpp
 /* you must to declare the functions */
 
-void sendStatus(Request* request, Response* response) {
+void sendStatus(Request& request, Response& response) {
 	/* create a JSON object that will be sent in response */
 	json payload;
 	payload["message"] = "Server is running without a problem.";
 
 	/* set data to send on response */
-	response->body(payload);
+	response.body(payload);
 	/* unique call */
-	response->send();
+	response.send();
 }
 
-void doSomething(Request* request, Response* response) {
+void doSomething(Request& request, Response& response) {
 	/* get request input (user's input) -- coming as JSON object -- */
-	json data = request->body();
+	json data = request.body();
 
 	/* check field that came from request's payload */
 	if (!data["field"]) {
 		/* send error */
-		response->error(Protocol::Code::BAD_REQUEST, "Missing some field.");
+		response.error(Protocol::Code::BAD_REQUEST, "Missing some field.");
 		return;
 	}
 
 	/* set data to send on response -- just mirroing -- */
-	response->body(data);
-	response->code(Protocol::Code::OK);
+	response.body(data);
+	response.code(Protocol::Code::OK);
 	/* unique call */
-	response->send();
+	response.send();
 }
 
 /* set routes (entries) */
@@ -73,21 +73,19 @@ server.route("/status", Protocol::Method::GET, sendStatus);
 server.route("/something", Protocol::Method::POST, doSomething);
 ```
 
-> 
-
 ### Example:
 
 ```cpp
 #include <htonsv/htonsv.hpp>
 
-void getStatus(Request* request, Response* response) {
+void getStatus(Request& request, Response& response) {
 	json payload = {
 		{"status", true},
 		{"message", "Everything is fine."}
 	};
 
-	/* response->body(payload); or just */
-	response->send(payload);
+	/* response.body(payload); or just */
+	response.send(payload);
 }
 
 int main(int argc, char* argv[]) {
@@ -101,14 +99,16 @@ int main(int argc, char* argv[]) {
 
 	std::cout << "Server is running with success at port " << port << "." << std::endl;
 
-	while (true) {}
+	std::cin.get();
 	return 1;
 }
 ```
 
+---
+
 ### Todo:
 
-- [ ] Fix head->>tail<< in requests, extend lifetime and keep connection alive until TIMEOUT or specific shutdown;
+- [ ] Fix head>>tail<< in requests, extend lifetime and keep connection alive until TIMEOUT or specific shutdown;
 - [ ] Make it cross-platform;
 - [ ] Check cmake pthread compile needs;
 - [ ] Review todo;
