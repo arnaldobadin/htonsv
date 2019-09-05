@@ -27,6 +27,7 @@ class Listener {
 		std::atomic<bool> _status;
 
 		int _socket;
+		int _address_size;
 		struct sockaddr_in _address;
 
 		bool _create();

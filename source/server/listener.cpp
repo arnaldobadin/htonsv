@@ -4,6 +4,7 @@ Listener::Listener(int16_t port, unsigned int max_connection_count) :
 	_port(port),
 	_max_connection_count(max_connection_count),
 	_status(false),
+	_address_size(0),
 	_socket(-1)
 {
 	if (_max_connection_count == 0) {
@@ -41,14 +42,15 @@ bool Listener::stop() {
 }
 
 int Listener::acquire() {
-	int address_size = sizeof(_address);
-	return accept(_socket, (struct sockaddr*) &_address, (socklen_t*) &address_size);
+	return accept(_socket, (struct sockaddr*) &_address, (socklen_t*) &_address_size);
 }
 
 bool Listener::_create() {
 	_address.sin_family = AF_INET;
 	_address.sin_addr.s_addr = INADDR_ANY;
 	_address.sin_port = htons(_port);
+
+	_address_size = sizeof(_address);
 
 	int socket_tmp = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_tmp == 0) return false;
@@ -64,7 +66,7 @@ bool Listener::_create() {
 }
 
 bool Listener::_bind() {
-	if (bind(_socket, (struct sockaddr*) &_address, sizeof(_address)) < 0) {
+	if (bind(_socket, (struct sockaddr*) &_address, _address_size) < 0) {
 		return false;
 	}
 	return true;
