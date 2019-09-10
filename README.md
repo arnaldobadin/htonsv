@@ -1,4 +1,4 @@
-![banner](https://raw.githubusercontent.com/arnaldobadin/htonsv/master/banner.png)
+![banner](https://raw.githubusercontent.com/arnaldobadin/htonsv/master/assets/banner.png)
 
 Just a simple HTTP JSON Server;
 
@@ -117,6 +117,7 @@ int main(int argc, char* argv[]) {
 - [ ] Test framework;
 - [ ] Pass compiled tags "pendantic";
 - [ ] Upgrade documentation (make it fancy);
+- [x] Add namespace;
 - [x] Update documentation;
 - [x] Review Request and Response;
 - [x] Review _processRequest (Server);

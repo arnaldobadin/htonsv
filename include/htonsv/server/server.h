@@ -14,7 +14,11 @@
 #include "htonsv/server/response.h"
 #include "htonsv/server/packet.hpp"
 
-class Server {
+namespace Htonsv {
+	class Server;
+}
+
+class Htonsv::Server {
 	public:
 		Server(std::uint16_t port);
 		~Server();

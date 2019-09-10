@@ -13,7 +13,11 @@
 
 using json = nlohmann::json;
 
-class Request {
+namespace Htonsv {
+	class Request;
+}
+
+class Htonsv::Request {
 	public:
 		Request(int socket, unsigned int buffer_size = 1024);
 		~Request();

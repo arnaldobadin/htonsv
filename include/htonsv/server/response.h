@@ -8,7 +8,11 @@
 
 #include "htonsv/server/packet.hpp"
 
-class Response {
+namespace Htonsv {
+	class Response;
+}
+
+class Htonsv::Response {
 	public:
 		Response(int socket_in);
 		~Response();

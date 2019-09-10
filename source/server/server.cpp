@@ -1,6 +1,6 @@
 #include "htonsv/server/server.h"
 
-Server::Server(std::uint16_t port) : 
+Htonsv::Server::Server(std::uint16_t port) : 
     _port(port),
     _status(false)
 {
@@ -9,11 +9,11 @@ Server::Server(std::uint16_t port) :
 	);
 }
 
-Server::~Server() {
+Htonsv::Server::~Server() {
 	stop();
 }
 
-bool Server::start() {
+bool Htonsv::Server::start() {
 	if (_status) return false;
 
 	if (!_consumer->start()) {
@@ -24,7 +24,7 @@ bool Server::start() {
 	return true;
 }
 
-bool Server::stop() {
+bool Htonsv::Server::stop() {
 	if (!_status) return false;
 
 	if (!_consumer->stop()) {
@@ -35,26 +35,26 @@ bool Server::stop() {
 	return true;
 }
 
-bool Server::route(const std::string& path, Protocol::Method method, std::function<void(Request&, Response&)> callback) {
+bool Htonsv::Server::route(const std::string& path, Protocol::Method method, std::function<void(Request&, Response&)> callback) {
 	Protocol::Item item = Protocol::Methods(method);
 	return _setRoute(path, item, callback);
 }
 
-bool Server::_setRoute(const std::string& path, Protocol::Item method, std::function<void(Request&, Response&)> callback) {
+bool Htonsv::Server::_setRoute(const std::string& path, Protocol::Item method, std::function<void(Request&, Response&)> callback) {
 	for (const Route& value : _routes) {
 		if (value.path == path && value.method.id == method.id) {
 			return false;
 		}
 	}
 
-	Server::Route route = {path, method, callback};
+	Htonsv::Server::Route route = {path, method, callback};
 	if (!route.valid()) return false;
 
 	_routes.push_back(route);
 	return true;
 }
 
-bool Server::_getRoute(const std::string& path, Protocol::Item method, Server::Route& route) {
+bool Htonsv::Server::_getRoute(const std::string& path, Protocol::Item method, Htonsv::Server::Route& route) {
 	for (const Route& value : _routes) {
 		if (value.path == path && value.method.id == method.id) {
 			route = value;
@@ -64,7 +64,7 @@ bool Server::_getRoute(const std::string& path, Protocol::Item method, Server::R
     return false;
 }
 
-void Server::_process(int socket_in) {
+void Htonsv::Server::_process(int socket_in) {
 	Request request(socket_in);
 	Response response(socket_in);
 
@@ -76,7 +76,7 @@ void Server::_process(int socket_in) {
 	std::string path = request.path();
 	Protocol::Item method = request.method();
 
-	Server::Route route;
+	Htonsv::Server::Route route;
 	if (!_getRoute(path, method, route)) {
 		response.error(Protocol::Code::NOT_FOUND, "Path or/and method invalid/not found.");
 		return;

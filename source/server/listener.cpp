@@ -1,6 +1,6 @@
 #include "htonsv/server/listener.h"
 
-Listener::Listener(int16_t port, unsigned int max_connection_count) : 
+Htonsv::Listener::Listener(int16_t port, unsigned int max_connection_count) : 
 	_port(port),
 	_max_connection_count(max_connection_count),
 	_status(false),
@@ -12,11 +12,11 @@ Listener::Listener(int16_t port, unsigned int max_connection_count) :
 	}
 }
 
-Listener::~Listener() {
+Htonsv::Listener::~Listener() {
 	stop();
 }
 
-bool Listener::start() {
+bool Htonsv::Listener::start() {
 	if (_status) return false;
 
 	if (!_create()) return false;
@@ -30,7 +30,7 @@ bool Listener::start() {
 	return true;
 }
 
-bool Listener::stop() {
+bool Htonsv::Listener::stop() {
 	if (!_status) return false;
 	
 	shutdown(_socket, SHUT_RD);
@@ -41,11 +41,11 @@ bool Listener::stop() {
 	return true;
 }
 
-int Listener::acquire() {
+int Htonsv::Listener::acquire() {
 	return accept(_socket, (struct sockaddr*) &_address, (socklen_t*) &_address_size);
 }
 
-bool Listener::_create() {
+bool Htonsv::Listener::_create() {
 	_address.sin_family = AF_INET;
 	_address.sin_addr.s_addr = INADDR_ANY;
 	_address.sin_port = htons(_port);
@@ -65,7 +65,7 @@ bool Listener::_create() {
 	return true;
 }
 
-bool Listener::_bind() {
+bool Htonsv::Listener::_bind() {
 	if (bind(_socket, (struct sockaddr*) &_address, _address_size) < 0) {
 		return false;
 	}

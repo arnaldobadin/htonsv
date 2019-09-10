@@ -1,6 +1,6 @@
 #include "htonsv/server/request.h"
 
-Request::Request(int socket, unsigned int buffer_size) : 
+Htonsv::Request::Request(int socket, unsigned int buffer_size) : 
 	_socket(socket),
 	_buffer_size(buffer_size),
 	_status(false)
@@ -10,22 +10,22 @@ Request::Request(int socket, unsigned int buffer_size) :
 	}
 }
 
-Request::~Request() {
+Htonsv::Request::~Request() {
 
 }
 
-bool Request::valid() const {
+bool Htonsv::Request::valid() const {
 	return _status;
 }
 
-bool Request::load() {
+bool Htonsv::Request::load() {
 	if (_status) return false;
 
 	if (!(_receive() && _transform())) return false;
 	return _status = true;
 }
 
-bool Request::_receive() {
+bool Htonsv::Request::_receive() {
 	std::vector<char> buffer(_buffer_size);
 	
 	read(_socket, buffer.data(), buffer.size());
@@ -36,7 +36,7 @@ bool Request::_receive() {
 	return true;
 }
 
-bool Request::_transform() {
+bool Htonsv::Request::_transform() {
 	if (!_data.length()) return false;
 	return _packet.in(_data);
 }

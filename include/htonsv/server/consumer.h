@@ -19,7 +19,11 @@
 
 #include "htonsv/server/listener.h"
 
-class Consumer {
+namespace Htonsv {
+	class Consumer;
+}
+
+class Htonsv::Consumer {
 	public:
 		Consumer(std::uint16_t port, std::function<void(int)> callback);
 		~Consumer();

@@ -10,7 +10,11 @@
 #include <stdexcept>
 #include <atomic>
 
-class Listener {
+namespace Htonsv {
+	class Listener;
+}
+
+class Htonsv::Listener {
 	public:
 		Listener(int16_t port, unsigned int max_connection_count = 512);
 		~Listener();

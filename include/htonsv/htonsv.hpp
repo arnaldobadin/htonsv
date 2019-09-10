@@ -3,4 +3,6 @@
 
 #include "htonsv/server/server.h"
 
+namespace Htonsv {}
+
 #endif

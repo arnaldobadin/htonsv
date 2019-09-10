@@ -1,6 +1,6 @@
 #include <htonsv/htonsv.hpp>
 
-void getStatus(Request& request, Response& response) {
+void getStatus(Htonsv::Request& request, Htonsv::Response& response) {
 	json payload = {
 		{"status", true},
 		{"message", "Everything is fine."}
@@ -13,9 +13,9 @@ int main(int argc, char* argv[]) {
 	uint16_t port = 7777;
 	if (argc > 1) port = atoi(argv[1]);
 
-	Server server(port);
+	Htonsv::Server server(port);
 	
-	server.route("/status", Protocol::Method::GET, getStatus);
+	server.route("/status", Htonsv::Protocol::Method::GET, getStatus);
 	server.start();
 
 	std::cout << "Server is running with success at port " << port << "." << std::endl;

@@ -1,6 +1,6 @@
 #include "htonsv/server/consumer.h"
 
-Consumer::Consumer(std::uint16_t port, std::function<void(int)> callback) : 
+Htonsv::Consumer::Consumer(std::uint16_t port, std::function<void(int)> callback) : 
 	_port(port),
 	_socket(-1),
 	_status(false),
@@ -15,11 +15,11 @@ Consumer::Consumer(std::uint16_t port, std::function<void(int)> callback) :
 	_listener = std::unique_ptr<Listener>(new Listener(_port, _max_connection_count));
 }
 
-Consumer::~Consumer() {
+Htonsv::Consumer::~Consumer() {
 	stop();
 }
 
-bool Consumer::start() {
+bool Htonsv::Consumer::start() {
 	if (_status) return false;
 
 	if (!_listener->start()) {
@@ -28,17 +28,17 @@ bool Consumer::start() {
 
 	_status = true;
 
-	_thread_consume = std::thread(&Consumer::_consume, this, "consumer");
+	_thread_consume = std::thread(&Htonsv::Consumer::_consume, this, "consumer");
 	for (size_t i = 0; i < _thread_count; i++) {
 		_threads_process.push_back(
-			std::thread(&Consumer::_process, this, ("worker-" + std::to_string(i)))
+			std::thread(&Htonsv::Consumer::_process, this, ("worker-" + std::to_string(i)))
 		);
 	}
 
 	return true;
 }
 
-bool Consumer::stop() {
+bool Htonsv::Consumer::stop() {
 	if (!_status) return false;
 
 	if (!_listener->stop()) {
@@ -69,7 +69,7 @@ bool Consumer::stop() {
 	return true;
 }
 
-void Consumer::_consume(const std::string& name) {
+void Htonsv::Consumer::_consume(const std::string& name) {
 	int socket_in = -1;
 
 	while (_status) {
@@ -88,7 +88,7 @@ void Consumer::_consume(const std::string& name) {
 	}
 }
 
-void Consumer::_process(const std::string& name) {
+void Htonsv::Consumer::_process(const std::string& name) {
 	int socket_in = -1;
 
 	while (_status) {
