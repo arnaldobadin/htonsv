@@ -22,11 +22,11 @@ Setting up server:
 uint16_t port = 5000;
 
 /* declare Server instance */
-Server server(port);
+Htonsv::Server server(port);
 
 /* set a route (entry) */
-server.route("/status", Protocol::Method::GET, sendStatus);
-server.route("/something", Protocol::Method::POST, doSomething);
+server.route("/status", Htonsv::Protocol::Method::GET, sendStatus);
+server.route("/something", Htonsv::Protocol::Method::POST, doSomething);
 
 /* start server */
 server.start();
@@ -39,7 +39,7 @@ You can add routes, taking the path, method and function to be execute:
 ```cpp
 /* you must to declare the functions */
 
-void sendStatus(Request& request, Response& response) {
+void sendStatus(Htonsv::Request& request, Htonsv::Response& response) {
 	/* create a JSON object that will be sent in response */
 	json payload;
 	payload["message"] = "Server is running without a problem.";
@@ -50,14 +50,14 @@ void sendStatus(Request& request, Response& response) {
 	response.send();
 }
 
-void doSomething(Request& request, Response& response) {
+void doSomething(Htonsv::Request& request, Htonsv::Response& response) {
 	/* get request input (user's input) -- coming as JSON object -- */
 	json data = request.body();
 
 	/* check field that came from request's payload */
 	if (!data["field"]) {
 		/* send error */
-		response.error(Protocol::Code::BAD_REQUEST, "Missing some field.");
+		response.error(Htonsv::Protocol::Code::BAD_REQUEST, "Missing some field.");
 		return;
 	}
 
@@ -69,8 +69,8 @@ void doSomething(Request& request, Response& response) {
 }
 
 /* set routes (entries) */
-server.route("/status", Protocol::Method::GET, sendStatus);
-server.route("/something", Protocol::Method::POST, doSomething);
+server.route("/status", Htonsv::Protocol::Method::GET, sendStatus);
+server.route("/something", Htonsv::Protocol::Method::POST, doSomething);
 ```
 
 ### Example:
@@ -78,7 +78,7 @@ server.route("/something", Protocol::Method::POST, doSomething);
 ```cpp
 #include <htonsv/htonsv.hpp>
 
-void getStatus(Request& request, Response& response) {
+void getStatus(Htonsv::Request& request, Htonsv::Response& response) {
 	json payload = {
 		{"status", true},
 		{"message", "Everything is fine."}
@@ -92,9 +92,9 @@ int main(int argc, char* argv[]) {
 	uint16_t port = 7777;
 	if (argc > 1) port = atoi(argv[1]);
 
-	Server server(port);
+	Htonsv::Server server(port);
 	
-	server.route("/status", Protocol::Method::GET, getStatus);
+	server.route("/status", Htonsv::Protocol::Method::GET, getStatus);
 	server.start();
 
 	std::cout << "Server is running with success at port " << port << "." << std::endl;
