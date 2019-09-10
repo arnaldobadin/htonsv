@@ -108,6 +108,7 @@ int main(int argc, char* argv[]) {
 
 ### Todo:
 
+- [ ] Convert syntax into std style;
 - [ ] Fix head>>tail<< in requests, extend lifetime and keep connection alive until TIMEOUT or specific shutdown;
 - [ ] Make it cross-platform;
 - [ ] Check cmake pthread compile needs;
