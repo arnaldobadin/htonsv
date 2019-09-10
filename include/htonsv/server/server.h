@@ -1,5 +1,5 @@
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef HTONSV_SERVER_H
+#define HTONSV_SERVER_H
 
 #include <string.h>
 #include <iostream>

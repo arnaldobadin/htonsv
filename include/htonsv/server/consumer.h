@@ -1,5 +1,5 @@
-#ifndef CONSUMER_H
-#define CONSUMER_H
+#ifndef HTONSV_CONSUMER_H
+#define HTONSV_CONSUMER_H
 
 #include <iostream>
 #include <cstdint>

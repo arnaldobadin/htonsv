@@ -1,5 +1,5 @@
-#ifndef REQUEST_H
-#define REQUEST_H
+#ifndef HTONSV_REQUEST_H
+#define HTONSV_REQUEST_H
 
 #include <unistd.h>
 #include <string.h>

@@ -1,5 +1,5 @@
-#ifndef RESPONSE_H
-#define RESPONSE_H
+#ifndef HTONSV_RESPONSE_H
+#define HTONSV_RESPONSE_H
 
 #include <unistd.h>
 #include <iostream>

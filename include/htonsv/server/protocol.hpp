@@ -1,5 +1,5 @@
-#ifndef PROTOCOL_HPP
-#define PROTOCOL_HPP
+#ifndef HTONSV_PROTOCOL_HPP
+#define HTONSV_PROTOCOL_HPP
 
 #include <string>
 #include <vector>

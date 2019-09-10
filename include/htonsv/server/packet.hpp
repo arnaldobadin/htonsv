@@ -1,5 +1,5 @@
-#ifndef PACKET_HPP
-#define PACKET_HPP
+#ifndef HTONSV_PACKET_HPP
+#define HTONSV_PACKET_HPP
 
 #include <string>
 #include <unordered_map>

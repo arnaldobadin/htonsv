@@ -1,5 +1,5 @@
-#ifndef TEXT_HPP
-#define TEXT_HPP
+#ifndef HTONSV_TEXT_HPP
+#define HTONSV_TEXT_HPP
 
 #include <vector>
 #include <string>
