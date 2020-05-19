@@ -1,4 +1,4 @@
-Simple HTTP JSON Server;
+## Simple HTTP JSON Server
 
 ### Setup:
 
