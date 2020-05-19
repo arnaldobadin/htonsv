@@ -1,6 +1,4 @@
-![banner](https://raw.githubusercontent.com/arnaldobadin/htonsv/master/assets/banner.png)
-
-Just a simple HTTP JSON Server;
+Simple HTTP JSON Server;
 
 ### Setup:
 
